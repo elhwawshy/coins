@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Dollar to Selected Currency</title>
+
+    <!-- Bootstrap file-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- Css Style -->
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+    <div class="containerfllued mt-5 bg" >
+        <div class="row">
+            <div class="col-md-8 m-auto">
+                <h2 class="text-center mt-3">Convert Dollar to Selected Currency</h2>
+
+
+                <form onsubmit="return validate();">
+                    <input type="number" id="demo" class="form-control my-4" placeholder="Enter Amount in Dollars" step="0.01">
+                    <!-- Currency dropdown -->
+                    <select id="currency" class="form-control mb-4">
+                    <option value="EGP">Egyptian Pound (EGP)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="GBP">British Pound (GBP)</option>
+                    <option value="INR">Indian Rupee (INR)</option>
+                </select>
+
+                <input type="submit" class="btn btn-primary btn-block" onclick="validate();">
+
+            </form>
+
+                <div class="text-center">
+                    <button class="btn btn-warning m-3" onclick="updateValue('increase')">Increase</button>
+                    <button class="btn btn-danger m-3" onclick="updateValue('decrease')">Decrease</button>
+                </div>
+
+
+                <h3 id="Amount" class="text-center mt-3"></h3>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="js/jquery.slim.min.js"></script>
+    <!-- Popper.js -->
+    <script src="js/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Script JS -->
+    <script src="js/script.js"></script>
+
+
+
+</body>
+</html>
