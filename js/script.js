@@ -1,43 +1,86 @@
 var value = 0;
+var exchangeRates = {};  
+
+
+function fetchExchangeRates() {
+    fetch("https://api.exchangerate-api.com/v4/latest/USD")
+        .then(response => response.json())
+        .then(data => {
+            exchangeRates = data.rates;
+            loadLastConversion();
+        })
+        .catch(error => console.error("Error fetching data: ", error));
+}
+
+
+window.onload = fetchExchangeRates;
 
 function updateValue(action) {
+    
+    var currentValue = parseFloat(document.getElementById("demo").value);
+
     if (action === 'increase') {
-        value += 1;
+        currentValue += 1;
     } else if (action === 'decrease') {
-        value -= 1;
+        currentValue -= 1;
     }
 
 
-    document.getElementById("demo").value = value;
+    if (!isNaN(currentValue) && currentValue >= 0) {
+        document.getElementById("demo").value = currentValue.toFixed(2);
+    }
 }
 
 function validate() {
-    var value = document.getElementById("demo").value;
-    var currency = document.getElementById("currency").value;
+    var value = parseFloat(document.getElementById("demo").value);
+    var selectedCurrencies = Array.from(document.getElementById("currency").selectedOptions).map(option => option.value);
     var result = document.getElementById("Amount");
+    var comparison = document.getElementById("comparison");
 
-
-  var exchangeRates = {
-        "EGP": 49.5,
-        "EUR": 0.92,
-        "GBP": 0.82,
-        "INR": 82
-    };
-
-
-    if (value == "") {
-        result.innerHTML = "Please enter a value.";
-        result.style.color = "red";
-        return false;
-    } else if (value <= 0) {
-        result.innerHTML = "Please enter a positive number.";
+    if (isNaN(value) || value <= 0) {
+        result.innerHTML = "Please enter a valid positive number.";
         result.style.color = "red";
         return false;
     }
 
 
-    var convertedAmount = value * exchangeRates[currency];
-    result.innerHTML = convertedAmount + ' ' + currency;
+    var convertedAmounts = selectedCurrencies.map(currency => {
+        var convertedAmount = (value * exchangeRates[currency]).toFixed(2);
+        return `${convertedAmount} ${currency}`;
+    }).join('<br/>');
+
+    result.innerHTML = convertedAmounts;
     result.style.color = "green";
+
+    
+    var euroDifference = (value * exchangeRates['EUR']).toFixed(2);
+    var differenceMessage = `Difference with Euro: ${euroDifference} EUR`;
+    comparison.innerHTML = differenceMessage;
+
+    
+    storeConversion(value, selectedCurrencies, convertedAmounts);
+
+
     return false;
+}
+
+
+function storeConversion(value, currencies, result) {
+    var conversionDetails = {
+        value,
+        currencies,
+        result
+    };
+    localStorage.setItem('lastConversion', JSON.stringify(conversionDetails));
+}
+
+// Load last conversion from localStorage
+function loadLastConversion() {
+    let lastConversion = JSON.parse(localStorage.getItem('lastConversion'));
+    if (lastConversion) {
+        document.getElementById("demo").value = lastConversion.value;
+        document.getElementById("currency").value = lastConversion.currencies;
+        document.getElementById("Amount").innerHTML = lastConversion.result;
+        document.getElementById("lastConversion").innerHTML = `Last Conversion: ${lastConversion.result}`;
+    }
 }
